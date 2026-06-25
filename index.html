@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Michael Jackson: Complete Discography Ranker</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0a0a0a;
+            color: #FFFFFF;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 700px;
+            width: 100%;
+            background-color: #121212;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            text-align: center;
+            border: 1px solid #222;
+        }
+
+        h1 {
+            color: #d4af37; /* Gold Theme */
+            margin-bottom: 5px;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            color: #aaa;
+            margin-bottom: 25px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .era-selector {
+            background-color: #181818;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: left;
+            max-height: 380px;
+            overflow-y: auto;
+            border: 1px solid #282828;
+        }
+
+        .select-all-box {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #333;
+        }
+
+        .select-all-box span {
+            cursor: pointer;
+            color: #d4af37;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .era-option {
+            display: flex;
+            align-items: center;
+            margin: 12px 0;
+            cursor: pointer;
+        }
+
+        .era-option input {
+            margin-right: 12px;
+            transform: scale(1.2);
+            accent-color: #d4af37;
+        }
+
+        .era-option label {
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button {
+            background-color: #d4af37;
+            color: black;
+            border: none;
+            padding: 12px 35px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            margin: 10px 5px;
+        }
+
+        button:hover {
+            background-color: #fff;
+            transform: scale(1.03);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .battle-box {
+            margin-top: 20px;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .song-btn {
+            background-color: #1a1a1a;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 26px 20px;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        .song-btn:hover {
+            background-color: #222;
+            border-color: #d4af37;
+            transform: translateY(-2px);
+        }
+
+        .tie-btn {
+            background-color: #2a2a2a;
+            color: #aaa;
+            font-size: 14px;
+            padding: 12px 24px;
+        }
+
+        .tie-btn:hover {
+            background-color: #3a3a3a;
+            color: #fff;
+        }
+
+        .progress-bar-container {
+            background-color: #222;
+            border-radius: 10px;
+            height: 10px;
+            width: 100%;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background-color: #d4af37;
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .results-container {
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid #222;
+            background: #181818;
+            border-radius: 8px;
+            padding: 10px 20px;
+        }
+
+        ol {
+            text-align: left;
+            padding-left: 20px;
+        }
+
+        li {
+            padding: 12px 0;
+            border-bottom: 1px solid #222;
+            font-size: 15px;
+        }
+        
+        li::marker {
+            color: #d4af37;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>MICHAEL JACKSON</h1>
+    <div class="subtitle">Complete Discography Ranker</div>
+    
+    <!-- Setup Screen -->
+    <div id="setup-screen">
+        <p style="text-align: left; color: #ccc; margin-bottom: 5px;">Select the studio albums to include in your ranking pool:</p>
+        <div class="select-all-box">
+            <span id="select-all-btn">Select All</span>
+            <span id="clear-all-btn">Clear All</span>
+        </div>
+        <div class="era-selector" id="era-list">
+            <!-- Populated dynamically by JS -->
+        </div>
+        <button id="start-btn">Begin Dynamic Sort</button>
+    </div>
+
+    <!-- Battle Screen -->
+    <div id="battle-screen" class="hidden battle-box">
+        <h3 id="progress-text" style="color: #aaa; font-weight: 400; margin-bottom: 15px;">Placing track 2 of X</h3>
+        <div class="progress-bar-container">
+            <div id="progress-bar" class="progress-bar"></div>
+        </div>
+        
+        <div class="options-container">
+            <div id="option1" class="song-btn">Song 1</div>
+            <div id="option2" class="song-btn">Song 2</div>
+            <button id="option-none" class="tie-btn">No Preference (Breaks tie randomly)</button>
+        </div>
+    </div>
+
+    <!-- Results Screen -->
+    <div id="results-screen" class="hidden">
+        <h2 style="color: #d4af37; margin-bottom: 20px;">Your Definitive Track Ranking</h2>
+        <div class="results-container">
+            <ol id="ranking-list"></ol>
+        </div>
+        <button id="restart-btn">Start Over</button>
+    </div>
+</div>
+
+<script>
+    // Complete, meticulous mapping of Michael Jackson's official solo studio albums
+    const fullMJDicography = {
+        "Got to Be There (1972)": [
+            "Got to Be There", "Ain't No Sunshine", "I Wanna Be Where You Are", "Girl Don't Take Your Love From Me", 
+            "In Our Small Way", "Rockin' Robin", "Wings of My Love", "Maria (You Were the Only One)", 
+            "Love Is Here and Now You're Gone", "You've Got a Friend"
+        ],
+        "Ben (1972)": [
+            "Ben", "The Greatest Show on Earth", "People Make the World Go 'Round", "We've Got a Good Thing Going", 
+            "Everybody's Somebody's Fool", "My Girl", "What Goes Around Comes Around", "In Our Small Way (Ben Version)", 
+            "Shoo-Be-Doo-Be-Doo-Da-Day", "You Can Cry on My Shoulder"
+        ],
+        "Music & Me (1973)": [
+            "With a Child's Heart", "Up Again", "All the Things You Are", "Happy", "Too Young", 
+            "Doggin' Around", "Euphoria", "Morning Glow", "Music and Me", "Too Late Change Your Mind"
+        ],
+        "Forever, Michael (1975)": [
+            "We're Almost There", "Take Me Back", "One Day in Your Life", "Cinderella Stay Awhile", 
+            "We've Got Forever", "Just a Little Bit of You", "You Are There", "Dapper Dan", "Dear Michael", "I'll Come Home to You"
+        ],
+        "Off the Wall (1979)": [
+            "Don't Stop 'Til You Get Enough", "Rock With You", "Working Day and Night", "Get on the Floor", 
+            "Off the Wall", "Girlfriend", "She's Out of My Life", "I Can't Help It", "It's the Falling in Love", "Burn This Disco Out"
+        ],
+        "Thriller (1982)": [
+            "Wanna Be Startin' Somethin'", "Baby Be Mine", "The Girl Is Mine", "Thriller", "Beat It", 
+            "Billie Jean", "Human Nature", "P.Y.T. (Pretty Young Thing)", "The Lady in My Life"
+        ],
+        "Bad (1987)": [
+            "Bad", "The Way You Make Me Feel", "Speed Demon", "Liberian Girl", "Just Good Friends", 
+            "Another Part of Me", "Man in the Mirror", "I Just Can't Stop Loving You", "Dirty Diana", "Smooth Criminal", "Leave Me Alone"
+        ],
+        "Dangerous (1991)": [
+            "Jam", "Why You Wanna Trip on Me", "In the Closet", "She Drives Me Wild", "Remember the Time", 
+            "Can't Let Her Get Away", "Heal the World", "Black or White", "Who Is It", "Give In to Me", 
+            "Will You Be There", "Keep the Faith", "Gone Too Soon", "Dangerous"
+        ],
+        "HIStory: Past, Present and Future (1995)": [
+            "Scream", "They Don't Care About Us", "Stranger in Moscow", "This Time Around", "Earth Song", 
+            "D.S.", "Money", "Come Together", "You Are Not Alone", "Childhood", "Tabloid Junkie", 
+            "2 Bad", "HIStory", "Little Susie", "Smile"
+        ],
+        "Blood on the Dance Floor (1997)": [
+            "Blood on the Dance Floor", "Morphine", "Superfly Sister", "Ghosts", "Is It Scary"
+        ],
+        "Invincible (2001)": [
+            "Unbreakable", "Heartbreaker", "Invincible", "Break of Dawn", "Heaven Can Wait", "You Rock My World", 
+            "Butterflies", "Speechless", "2000 Watts", "You Are My Life", "Privacy", "Don't Walk Away", 
+            "Cry", "Track 14 (Invincible)", "Whatever Happens", "Threatened"
+        ],
+        "Michael (2010)": [
+            "Hold My Hand", "Hollywood Tonight", "Keep Your Head Up", "I Like The Way You Love Me",
+            "Best of Joy", "(I Can't Make It) Another Day", "Behind the Mask", "Much Too Soon"
+        ],
+        "Xscape (2014)": [
+            "Love Never Felt So Good", "Chicago", "Loving You", "A Place with No Name",
+            "Slave to the Rhythm", "Do You Know Where Your Children Are", "Blue Gangsta", "Xscape"
+        ]
+    };
+
+    // App State Variables
+    let allSongs = [];
+    let sortedSongs = [];
+    let currentItemIndex = 1; 
+    let low = 0, high = 0, mid = 0;
+
+    // DOM Elements
+    const setupScreen = document.getElementById('setup-screen');
+    const battleScreen = document.getElementById('battle-screen');
+    const resultsScreen = document.getElementById('results-screen');
+    const eraListContainer = document.getElementById('era-list');
+    const startBtn = document.getElementById('start-btn');
+    const restartBtn = document.getElementById('restart-btn');
+    const selectAllBtn = document.getElementById('select-all-btn');
+    const clearAllBtn = document.getElementById('clear-all-btn');
+    const option1Btn = document.getElementById('option1');
+    const option2Btn = document.getElementById('option2');
+    const noPrefBtn = document.getElementById('option-none');
+    const progressText = document.getElementById('progress-text');
+    const progressBar = document.getElementById('progress-bar');
+    const rankingList = document.getElementById('ranking-list');
+
+    function initSetup() {
+        eraListContainer.innerHTML = '';
+        Object.keys(fullMJDicography).forEach((era, index) => {
+            const div = document.createElement('div');
+            div.className = 'era-option';
+            div.innerHTML = `
+                <input type="checkbox" id="era-${index}" value="${era}" checked>
+                <label for="era-${index}"><strong>${era}</strong> <span style="color: #777; font-size: 12px;">(${fullMJDicography[era].length} songs)</span></label>
+            `;
+            eraListContainer.appendChild(div);
+        });
+    }
+
+    selectAllBtn.addEventListener('click', () => toggleAll(true));
+    clearAllBtn.addEventListener('click', () => toggleAll(false));
+    startBtn.addEventListener('click', startRanking);
+    restartBtn.addEventListener('click', resetApp);
+    option1Btn.addEventListener('click', () => handleChoice(1));
+    option2Btn.addEventListener('click', () => handleChoice(2));
+    noPrefBtn.addEventListener('click', () => handleChoice(Math.random() < 0.5 ? 1 : 2));
+
+    function toggleAll(checked) {
+        const checkboxes = eraListContainer.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(cb => cb.checked = checked);
+    }
+
+    function startRanking() {
+        allSongs = [];
+        const checkboxes = eraListContainer.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(cb => {
+            if (cb.checked) {
+                allSongs = allSongs.concat(fullMJDicography[cb.value]);
+            }
+        });
+
+        if (allSongs.length < 2) {
+            alert("Please pick at least 2 tracks to start sorting!");
+            return;
+        }
+
+        allSongs.sort(() => Math.random() - 0.5);
+        sortedSongs = [allSongs[0]]; 
+        currentItemIndex = 1;
+        
+        setupScreen.classList.add('hidden');
+        battleScreen.classList.remove('hidden');
+        initBinarySearchLoop();
+    }
+
+    function initBinarySearchLoop() {
+        if (currentItemIndex >= allSongs.length) {
+            showResults();
+            return;
+        }
+        low = 0;
+        high = sortedSongs.length - 1;
+        updateMidAndDisplay();
+    }
+
+    function updateMidAndDisplay() {
+        mid = Math.floor((low + high) / 2);
+        option1Btn.textContent = allSongs[currentItemIndex];
+        option2Btn.textContent = sortedSongs[mid];
+        
+        const overallProgress = (currentItemIndex / allSongs.length) * 100;
+        progressBar.style.width = `${overallProgress}%`;
+        progressText.textContent = `Sorting track ${currentItemIndex + 1} of ${allSongs.length}`;
+    }
+
+    function handleChoice(choice) {
+        if (choice === 1) {
+            high = mid - 1;
+        } else {
+            low = mid + 1;
+        }
+
+        if (low > high) {
+            sortedSongs.splice(low, 0, allSongs[currentItemIndex]);
+            currentItemIndex++;
+            initBinarySearchLoop();
+        } else {
+            updateMidAndDisplay();
+        }
+    }
+
+    function showResults() {
+        battleScreen.classList.add('hidden');
+        resultsScreen.classList.remove('hidden');
+        
+        rankingList.innerHTML = "";
+        sortedSongs.forEach(song => {
+            const li = document.createElement('li');
+            li.textContent = song;
+            rankingList.appendChild(li);
+        });
+    }
+
+    function resetApp() {
+        resultsScreen.classList.add('hidden');
+        setupScreen.classList.remove('hidden');
+        initSetup();
+    }
+
+    initSetup();
+</script>
+
+</body>
+</html>
